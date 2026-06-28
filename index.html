@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proficiency Exam Master</title>
+    <style>
+        /* TEMA DEĞİŞKENLERİ (Açık ve Koyu Mod İçin) */
+        :root {
+            --bg-color: #f4f7f6;
+            --app-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #6c757d;
+            --border-color: #e9ecef;
+            --btn-bg: #f8f9fa;
+            --btn-hover: #e2e8f0;
+            --context-bg: #eef2f5;
+            
+            /* Açık Mod Açıklama Kutusu Renkleri */
+            --explanation-bg: #fff3cd;
+            --explanation-text: #856404;
+            --explanation-border: #ffc107;
+        }
+
+        /* KOYU MOD (Dark Mode) RENKLERİ */
+        body.dark-mode {
+            --bg-color: #121212;
+            --app-bg: #1e1e2f;
+            --text-main: #e0e0e0;
+            --text-muted: #a0a0b0;
+            --border-color: #333344;
+            --btn-bg: #2a2a40;
+            --btn-hover: #3a3a55;
+            --context-bg: #252538;
+            
+            /* Koyu Mod Açıklama Kutusu Renkleri (Göz Yormayan) */
+            --explanation-bg: #292938;
+            --explanation-text: #d1d5db;
+            --explanation-border: #4299e1;
+        }
+
+        /* Genel Sayfa Ayarları */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--bg-color); 
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; margin: 0; 
+            color: var(--text-main); 
+            padding: 20px; box-sizing: border-box; 
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .app-container { 
+            background-color: var(--app-bg); 
+            padding: 40px; border-radius: 12px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
+            width: 100%; max-width: 800px; 
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+        
+        /* Tema Kontrol Paneli (Sağ Üst) */
+        .theme-controls {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .color-picker {
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 0;
+            background: none;
+        }
+        .theme-toggle-btn {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .theme-toggle-btn:hover { background-color: var(--btn-hover); }
+
+        /* Üst Menü / Navigasyon Barı */
+        .header-container { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px; margin-top: 20px; }
+        .header-left, .header-right { display: flex; gap: 10px; flex: 1; }
+        .header-left { justify-content: flex-start; }
+        .header-right { justify-content: flex-end; }
+        .header-container h1 { margin: 0; padding: 0; font-size: 24px; color: var(--text-main); text-align: center; flex: 2; }
+
+        /* Navigasyon Butonları */
+        button.nav-btn, button.home-btn { padding: 10px 15px; font-size: 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background-color 0.2s; white-space: nowrap; }
+        button.nav-btn { background-color: #007bff; color: white; }
+        button.nav-btn:hover:not(:disabled) { background-color: #0056b3; }
+        button.nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        button.home-btn { background-color: #e74c3c; color: white; }
+        button.home-btn:hover { background-color: #c0392b; }
+
+        .subtitle { color: var(--text-muted); font-size: 16px; margin-bottom: 20px; text-align: center; font-weight: 600; }
+        
+        /* Konu Seçim Ekranı */
+        #topics-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .topic-btn { padding: 15px; background-color: var(--btn-bg); color: var(--text-main); border: 2px solid var(--border-color); border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: left; }
+        .topic-btn:hover { background-color: var(--btn-hover); border-color: #cbd5e1; }
+        
+        /* Menü Butonları */
+        .mode-buttons { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 30px; }
+        .mode-btn { padding: 18px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; color: white; transition: background-color 0.2s; }
+        .mode-btn.quiz { background-color: #6f42c1; } .mode-btn.quiz:hover:not(:disabled) { background-color: #59339d; }
+        .mode-btn:disabled { background-color: #bdc3c7 !important; cursor: not-allowed; color: #7f8c8d; }
+        
+        /* Okuma Parçası / Bağlam Kutusu */
+        .context-box { background-color: var(--context-bg); padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; font-size: 15px; color: var(--text-main); border-left: 4px solid #3498db; max-height: 250px; overflow-y: auto; display: none; line-height: 1.6; }
+
+        /* Soru Tasarımı */
+        .question { font-size: 18px; margin-bottom: 20px; font-weight: 600; white-space: pre-wrap; color: var(--text-main); }
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        button.option { padding: 15px 20px; border: 2px solid var(--border-color); background-color: var(--btn-bg); color: var(--text-main); border-radius: 8px; cursor: pointer; font-size: 16px; text-align: left; transition: all 0.2s ease; }
+        button.option:hover:not(:disabled) { background-color: var(--btn-hover); }
+        button.option.correct { background-color: #d4edda !important; border-color: #28a745 !important; color: #155724 !important; font-weight: bold; }
+        button.option.incorrect { background-color: #f8d7da !important; border-color: #dc3545 !important; color: #721c24 !important; }
+        button.option:disabled { cursor: not-allowed; }
+        
+        /* Açıklama Kutusu (Güncellendi) */
+        .explanation-box { 
+            margin-top: 20px; 
+            padding: 15px; 
+            background-color: var(--explanation-bg); 
+            border-left: 5px solid var(--explanation-border); 
+            border-radius: 4px; 
+            font-size: 15px; 
+            color: var(--explanation-text); 
+            display: none; 
+            line-height: 1.5; 
+        }
+        
+        .score-container { text-align: center; } .score-container h2 { font-size: 32px; margin-bottom: 20px; color: var(--text-main); }
+        .return-btn { padding: 12px 24px; background-color: #6c757d; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; margin-top: 20px; }
+        .start-quiz-btn { width: 100%; padding: 15px; background-color: #28a745; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top:15px; }
+        
+        .hidden { display: none !important; }
+
+        /* Mobil Uyum */
+        @media (max-width: 768px) { 
+            #topics-container { grid-template-columns: 1fr; } 
+            .header-container { flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 40px; }
+            .header-container h1 { flex: 100%; order: -1; } 
+            .header-left, .header-right { flex: auto; justify-content: center; }
+            .theme-controls { top: 10px; right: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div class="theme-controls">
+            <input type="color" id="bg-color-picker" class="color-picker" title="Arka Plan Rengini Değiştir" value="#f4f7f6">
+            <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()">🌙 Koyu Mod</button>
+        </div>
+
+        <div class="header-container">
+            <div class="header-left" id="header-left-controls" style="display: none;">
+                <button class="home-btn" onclick="goHome()">🏠 Ana Menü</button>
+            </div>
+            
+            <h1>Proficiency Exam Master</h1>
+            
+            <div class="header-right" id="header-right-controls" style="display: none;">
+                <button id="prev-btn" class="nav-btn" onclick="prevQuestion()">Önceki</button>
+                <button id="next-btn" class="nav-btn" onclick="nextQuestion()">Sonraki</button>
+            </div>
+        </div>
+        
+        <div id="screen-topics">
+            <div class="subtitle" id="loading-text">Soru havuzları yükleniyor...</div>
+            <div id="topics-container"></div>
+        </div>
+
+        <div id="screen-banks" class="hidden">
+            <div class="subtitle" id="selected-topic-banks-title" style="font-size: 20px; font-weight: bold;">Kategori Adı</div>
+            <p style="text-align: center; margin-bottom: 5px; color: var(--text-muted);">Lütfen hedef soru havuzunu (üniversiteyi) seçin:</p>
+            <div class="mode-buttons" id="banks-container"></div>
+            <button class="return-btn" onclick="goHome()" style="width: 100%; background-color: var(--btn-bg); color: var(--text-main); border: 2px solid var(--border-color);">Ana Menüye Dön</button>
+        </div>
+
+        <div id="screen-quiz" class="hidden">
+            <div class="subtitle" id="quiz-progress">Question 1 of 10</div>
+            
+            <div class="context-box" id="context-box"></div>
+
+            <div class="question" id="question-text"></div>
+            <div class="options" id="options-container"></div>
+            
+            <div class="explanation-box" id="explanation-box">
+                <span id="explanation-text"></span>
+            </div>
+        </div>
+
+        <div id="screen-score" class="hidden score-container">
+            <h2>Test Tamamlandı!</h2>
+            <p style="font-size: 20px;" id="score-text"></p>
+            <button class="start-quiz-btn" onclick="goHome()">Farklı Bir Kategori Seç</button>
+        </div>
+    </div>
+
+    <script>
+        // --- TEMA VE RENK AYARLARI ---
+        function toggleTheme() {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
+            const isDark = body.classList.contains('dark-mode');
+            
+            // Buton metnini güncelle
+            document.getElementById('theme-toggle-btn').innerText = isDark ? "☀️ Açık Mod" : "🌙 Koyu Mod";
+            
+            // Kullanıcı standard temaya geçtiyse özel arka plan rengini sıfırla
+            document.body.style.backgroundColor = '';
+            
+            // Tercihi kaydet
+            localStorage.setItem('appTheme', isDark ? 'dark' : 'light');
+            localStorage.removeItem('appCustomColor'); 
+        }
+
+        document.getElementById('bg-color-picker').addEventListener('input', function(e) {
+            const selectedColor = e.target.value;
+            // Tüm body (sayfa arkası) rengini değiştir
+            document.body.style.backgroundColor = selectedColor;
+            // Rengi kaydet
+            localStorage.setItem('appCustomColor', selectedColor);
+        });
+
+        function loadSavedTheme() {
+            const savedTheme = localStorage.getItem('appTheme');
+            const savedColor = localStorage.getItem('appCustomColor');
+
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('theme-toggle-btn').innerText = "☀️ Açık Mod";
+            }
+
+            if (savedColor) {
+                document.body.style.backgroundColor = savedColor;
+                document.getElementById('bg-color-picker').value = savedColor;
+            }
+        }
+        // -----------------------------
+
+        let database = {};
+        let currentTopic = "";
+        let currentBank = "";
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+
+        function showScreen(screenId) {
+            document.getElementById('screen-topics').classList.add('hidden');
+            document.getElementById('screen-banks').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-score').classList.add('hidden');
+            
+            document.getElementById(screenId).classList.remove('hidden');
+
+            if(screenId === 'screen-quiz') {
+                document.getElementById('header-left-controls').style.display = 'flex';
+                document.getElementById('header-right-controls').style.display = 'flex';
+            } else {
+                document.getElementById('header-left-controls').style.display = 'none';
+                document.getElementById('header-right-controls').style.display = 'none';
+            }
+        }
+
+        window.onload = async function() {
+            // Kaydedilmiş temayı yükle
+            loadSavedTheme();
+
+            try {
+                const response = await fetch('data.json');
+                if (!response.ok) throw new Error("Veri dosyası bulunamadı!");
+                database = await response.json();
+                
+                document.getElementById('loading-text').innerText = "Lütfen çalışmak istediğiniz bölümü seçin";
+                const container = document.getElementById('topics-container');
+                container.innerHTML = '';
+                
+                for (let topic in database) {
+                    let btn = document.createElement('button');
+                    btn.className = 'topic-btn';
+                    btn.innerText = topic;
+                    btn.onclick = () => selectTopic(topic);
+                    container.appendChild(btn);
+                }
+            } catch (error) {
+                console.error("Hata:", error);
+                document.getElementById('loading-text').innerHTML = "<span style='color:red;'>Veriler yüklenemedi. Lütfen 'Live Server' kullanın.</span>";
+            }
+        };
+
+        function selectTopic(topic) {
+            currentTopic = topic;
+            showBanks();
+        }
+
+        function goHome() {
+            showScreen('screen-topics');
+        }
+
+        function showBanks() {
+            document.getElementById('selected-topic-banks-title').innerText = currentTopic;
+            const container = document.getElementById('banks-container');
+            container.innerHTML = '';
+            
+            const banks = database[currentTopic].questionBanks;
+            
+            for (let bankName in banks) {
+                let btn = document.createElement('button');
+                btn.className = 'mode-btn quiz';
+                let questionCount = banks[bankName].length;
+                
+                if (questionCount === 0) {
+                    btn.innerText = bankName + " (Soru Bulunamadı)";
+                    btn.disabled = true;
+                } else {
+                    btn.innerText = bankName + " (" + questionCount + " Soru)";
+                    btn.onclick = () => startQuiz(bankName);
+                }
+                container.appendChild(btn);
+            }
+            showScreen('screen-banks');
+        }
+
+        function startQuiz(selectedBank) {
+            currentBank = selectedBank;
+            currentQuestionIndex = 0;
+            score = 0;
+            
+            const totalQ = database[currentTopic].questionBanks[currentBank].length;
+            userAnswers = new Array(totalQ).fill(null); 
+            
+            showScreen('screen-quiz');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const qData = database[currentTopic].questionBanks[currentBank][currentQuestionIndex];
+            const totalQ = database[currentTopic].questionBanks[currentBank].length;
+            
+            document.getElementById('prev-btn').disabled = (currentQuestionIndex === 0);
+            
+            if (currentQuestionIndex === totalQ - 1) {
+                document.getElementById('next-btn').innerText = "Testi Bitir";
+            } else {
+                document.getElementById('next-btn').innerText = "Sonraki";
+            }
+            
+            document.getElementById('quiz-progress').innerText = `Soru ${currentQuestionIndex + 1} / ${totalQ} (${currentBank})`;
+            
+            const contextBox = document.getElementById('context-box');
+            if (qData.context) {
+                contextBox.innerHTML = qData.context;
+                contextBox.style.display = 'block';
+            } else {
+                contextBox.style.display = 'none';
+            }
+
+            document.getElementById('question-text').innerHTML = qData.q;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = ''; 
+
+            qData.options.forEach((opt, index) => {
+                let btn = document.createElement('button');
+                btn.className = 'option';
+                btn.innerText = opt;
+                
+                if (userAnswers[currentQuestionIndex] !== null) {
+                    btn.disabled = true;
+                    if (index === qData.correct) {
+                        btn.classList.add('correct');
+                    } else if (index === userAnswers[currentQuestionIndex]) {
+                        btn.classList.add('incorrect');
+                    }
+                } else {
+                    btn.onclick = () => checkAnswer(index, btn);
+                }
+                
+                optionsContainer.appendChild(btn);
+            });
+
+            if (userAnswers[currentQuestionIndex] !== null) {
+                document.getElementById('explanation-text').innerHTML = qData.explanation;
+                document.getElementById('explanation-box').style.display = 'block';
+            } else {
+                document.getElementById('explanation-box').style.display = 'none';
+            }
+        }
+
+        function checkAnswer(selectedIndex, btnElement) {
+            const qData = database[currentTopic].questionBanks[currentBank][currentQuestionIndex];
+            const allBtns = document.getElementById('options-container').children;
+            
+            userAnswers[currentQuestionIndex] = selectedIndex;
+
+            for(let i=0; i<allBtns.length; i++) {
+                allBtns[i].disabled = true;
+                if(i === qData.correct) {
+                    allBtns[i].classList.add('correct');
+                }
+            }
+
+            if(selectedIndex === qData.correct) {
+                score++;
+            } else {
+                btnElement.classList.add('incorrect');
+            }
+
+            document.getElementById('explanation-text').innerHTML = qData.explanation;
+            document.getElementById('explanation-box').style.display = 'block';
+        }
+
+        function prevQuestion() {
+            if(currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            const totalQ = database[currentTopic].questionBanks[currentBank].length;
+            if(currentQuestionIndex < totalQ - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function endQuiz() {
+            const totalQ = database[currentTopic].questionBanks[currentBank].length;
+            document.getElementById('score-text').innerHTML = `<strong>${totalQ}</strong> sorudan <strong>${score}</strong> tanesini doğru cevapladınız.`;
+            showScreen('screen-score');
+        }
+    </script>
+</body>
+</html>
