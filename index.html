@@ -97,12 +97,14 @@
         .header-container h1 { margin: 0; padding: 0; font-size: 24px; color: var(--text-main); text-align: center; flex: 2; }
 
         /* Navigasyon Butonları */
-        button.nav-btn, button.home-btn { padding: 10px 15px; font-size: 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background-color 0.2s; white-space: nowrap; }
+        button.nav-btn, button.home-btn, button.test-select-btn { padding: 10px 15px; font-size: 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background-color 0.2s; white-space: nowrap; }
         button.nav-btn { background-color: #007bff; color: white; }
         button.nav-btn:hover:not(:disabled) { background-color: #0056b3; }
         button.nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
         button.home-btn { background-color: #e74c3c; color: white; }
         button.home-btn:hover { background-color: #c0392b; }
+        button.test-select-btn { background-color: #6f42c1; color: white; }
+        button.test-select-btn:hover { background-color: #59339d; }
 
         .subtitle { color: var(--text-muted); font-size: 16px; margin-bottom: 20px; text-align: center; font-weight: 600; }
         
@@ -170,6 +172,7 @@
         <div class="header-container">
             <div class="header-left" id="header-left-controls" style="display: none;">
                 <button class="home-btn" onclick="goHome()">🏠 Ana Menü</button>
+                <button class="test-select-btn" onclick="showBanks()">Test Seç</button>
             </div>
             
             <h1>Proficiency Exam Master</h1>
@@ -187,7 +190,7 @@
 
         <div id="screen-banks" class="hidden">
             <div class="subtitle" id="selected-topic-banks-title" style="font-size: 20px; font-weight: bold;">Kategori Adı</div>
-            <p style="text-align: center; margin-bottom: 5px; color: var(--text-muted);">Lütfen hedef soru havuzunu (üniversiteyi) seçin:</p>
+            <p style="text-align: center; margin-bottom: 5px; color: var(--text-muted);">Lütfen çözmek istediğiniz testi seçin:</p>
             <div class="mode-buttons" id="banks-container"></div>
             <button class="return-btn" onclick="goHome()" style="width: 100%; background-color: var(--btn-bg); color: var(--text-main); border: 2px solid var(--border-color);">Ana Menüye Dön</button>
         </div>
@@ -208,6 +211,7 @@
         <div id="screen-score" class="hidden score-container">
             <h2>Test Tamamlandı!</h2>
             <p style="font-size: 20px;" id="score-text"></p>
+            <button class="start-quiz-btn" onclick="showBanks()">Test Seç</button>
             <button class="start-quiz-btn" onclick="goHome()">Farklı Bir Kategori Seç</button>
         </div>
     </div>
