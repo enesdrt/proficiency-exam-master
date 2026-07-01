@@ -89,6 +89,171 @@
         }
         .theme-toggle-btn:hover { background-color: var(--btn-hover); }
 
+        /* Kullanıcı hesabı, notlar ve kelime listesi */
+        .auth-panel {
+            border: 1px solid var(--border-color);
+            background: var(--btn-bg);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 20px;
+            display: grid;
+            gap: 12px;
+        }
+        .auth-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .auth-row input {
+            flex: 1 1 180px;
+            min-width: 0;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--app-bg);
+            color: var(--text-main);
+            font-size: 14px;
+        }
+        .auth-btn {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-weight: 700;
+            color: white;
+            background: #2563eb;
+        }
+        .auth-btn.secondary { background: #16a34a; }
+        .auth-btn.muted { background: #64748b; }
+        .auth-btn:disabled { background: #94a3b8; cursor: not-allowed; }
+        .auth-message {
+            color: var(--text-muted);
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .user-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 999px;
+            background: var(--app-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-weight: 700;
+        }
+        .user-dashboard {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 20px;
+            background: var(--context-bg);
+        }
+        .dashboard-title, .tool-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+        .study-tools {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .tool-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px;
+            background: var(--btn-bg);
+        }
+        .note-area {
+            width: 100%;
+            min-height: 120px;
+            resize: vertical;
+            box-sizing: border-box;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--app-bg);
+            color: var(--text-main);
+            font: inherit;
+            line-height: 1.5;
+        }
+        .note-status, .word-help {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+        .word-token {
+            cursor: pointer;
+            border-bottom: 1px dotted #2563eb;
+            border-radius: 3px;
+            transition: background-color 0.15s ease, color 0.15s ease;
+        }
+        .word-token:hover {
+            background: rgba(37, 99, 235, 0.14);
+        }
+        .word-token.saved-word {
+            background: rgba(22, 163, 74, 0.16);
+            border-bottom-color: #16a34a;
+        }
+        .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 170px;
+            overflow-y: auto;
+            padding-top: 4px;
+        }
+        .word-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--app-bg);
+            color: var(--text-main);
+            border-radius: 999px;
+            padding: 6px 8px 6px 10px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .word-remove {
+            width: 20px;
+            height: 20px;
+            border: none;
+            border-radius: 50%;
+            background: #ef4444;
+            color: white;
+            cursor: pointer;
+            line-height: 1;
+            font-weight: 800;
+        }
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            transform: translateX(-50%);
+            background: #111827;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, bottom 0.2s ease;
+            z-index: 10;
+            font-weight: 700;
+        }
+        .toast.visible {
+            opacity: 1;
+            bottom: 34px;
+        }
+
         /* Üst Menü / Navigasyon Barı */
         .header-container { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px; margin-top: 20px; }
         .header-left, .header-right { display: flex; gap: 10px; flex: 1; }
@@ -153,6 +318,7 @@
         /* Mobil Uyum */
         @media (max-width: 768px) { 
             #topics-container { grid-template-columns: 1fr; } 
+            .study-tools { grid-template-columns: 1fr; }
             .header-container { flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 40px; }
             .header-container h1 { flex: 100%; order: -1; } 
             .header-left, .header-right { flex: auto; justify-content: center; }
@@ -183,6 +349,33 @@
             </div>
         </div>
         
+        <div class="auth-panel" id="auth-panel">
+            <div id="auth-signed-out">
+                <div class="auth-row">
+                    <input type="email" id="auth-email" autocomplete="email" placeholder="E-posta">
+                    <input type="password" id="auth-password" autocomplete="current-password" placeholder="Şifre">
+                    <button class="auth-btn" id="login-btn" onclick="handleLogin()">Giriş Yap</button>
+                    <button class="auth-btn secondary" id="register-btn" onclick="handleRegister()">Kayıt Ol</button>
+                </div>
+                <div class="auth-message" id="auth-message">Firebase ayarları bekleniyor.</div>
+            </div>
+            <div id="auth-signed-in" class="hidden">
+                <div class="auth-row">
+                    <span class="user-pill" id="user-email-pill">Kullanıcı</span>
+                    <button class="auth-btn muted" id="logout-btn" onclick="handleLogout()">Çıkış Yap</button>
+                </div>
+                <div class="auth-message" id="signed-in-message">Notların ve kelime listen hesabına kaydediliyor.</div>
+            </div>
+        </div>
+
+        <div class="user-dashboard hidden" id="user-dashboard">
+            <div class="dashboard-title">
+                <span>Bilmediğim Kelimeler</span>
+                <button class="theme-toggle-btn" onclick="loadUnknownWords()">Yenile</button>
+            </div>
+            <div class="word-list" id="dashboard-words-list"></div>
+        </div>
+
         <div id="screen-topics">
             <div class="subtitle" id="loading-text">Soru havuzları yükleniyor...</div>
             <div id="topics-container"></div>
@@ -206,6 +399,23 @@
             <div class="explanation-box" id="explanation-box">
                 <span id="explanation-text"></span>
             </div>
+
+            <div class="study-tools" id="study-tools">
+                <div class="tool-card">
+                    <div class="tool-title">
+                        <span>Bu Soru İçin Notum</span>
+                    </div>
+                    <textarea id="question-note" class="note-area" placeholder="Bu soruyla ilgili kendi notunu yaz..."></textarea>
+                    <div class="note-status" id="note-status">Not alanı hazırlanıyor.</div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-title">
+                        <span>Bilmediğim Kelimeler</span>
+                    </div>
+                    <div class="word-help" id="word-help">Metindeki veya seçeneklerdeki kelimelere tıklayarak listeye ekleyebilirsin.</div>
+                    <div class="word-list" id="quiz-words-list"></div>
+                </div>
+            </div>
         </div>
 
         <div id="screen-score" class="hidden score-container">
@@ -214,6 +424,7 @@
             <button class="start-quiz-btn" onclick="showBanks()">Test Seç</button>
             <button class="start-quiz-btn" onclick="goHome()">Farklı Bir Kategori Seç</button>
         </div>
+        <div class="toast" id="toast"></div>
     </div>
 
     <script>
@@ -265,6 +476,443 @@
         let score = 0;
         let userAnswers = [];
 
+        // Firebase bilgilerini buraya dolduracaksın. Boş bırakılırsa site yerel demo modda çalışır.
+        const firebaseConfig = {
+            apiKey: "AIzaSyB7NFPD8Q86NQvSxO1htrppKESJMcpkXFc",
+            authDomain: "proficiency-exam-master.firebaseapp.com",
+            projectId: "proficiency-exam-master",
+            storageBucket: "proficiency-exam-master.firebasestorage.app",
+            messagingSenderId: "1081292201993",
+            appId: "1:1081292201993:web:919d51921e39ae234918d8"
+        };
+
+        let firebaseReady = false;
+        let firebaseModules = {};
+        let auth = null;
+        let db = null;
+        let currentUser = null;
+        let usingLocalDemo = false;
+        let unknownWords = [];
+        let unknownWordSet = new Set();
+        let noteSaveTimer = null;
+        let toastTimer = null;
+
+        function isFirebaseConfigured() {
+            return Boolean(firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId && firebaseConfig.appId);
+        }
+
+        async function initFirebase() {
+            setupNoteAutosave();
+
+            if (!isFirebaseConfigured()) {
+                usingLocalDemo = true;
+                currentUser = { uid: 'local-demo-user', email: 'Yerel demo modu' };
+                document.getElementById('login-btn').disabled = true;
+                document.getElementById('register-btn').disabled = true;
+                document.getElementById('auth-message').innerText = 'Firebase anahtarları boş olduğu için kayıt/giriş pasif. Notlar ve kelimeler şimdilik bu tarayıcıda saklanıyor.';
+                updateAuthUI();
+                await loadUnknownWords();
+                return;
+            }
+
+            try {
+                const [appModule, authModule, firestoreModule] = await Promise.all([
+                    import('https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js'),
+                    import('https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js'),
+                    import('https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js')
+                ]);
+
+                const app = appModule.initializeApp(firebaseConfig);
+                auth = authModule.getAuth(app);
+                db = firestoreModule.getFirestore(app);
+                firebaseModules = { ...authModule, ...firestoreModule };
+                firebaseReady = true;
+
+                authModule.onAuthStateChanged(auth, async (user) => {
+                    currentUser = user;
+                    updateAuthUI();
+                    await loadUnknownWords();
+                    if (currentTopic && currentBank) {
+                        await loadCurrentNote();
+                        markSavedWords();
+                    }
+                });
+            } catch (error) {
+                console.error('Firebase başlatılamadı:', error);
+                usingLocalDemo = true;
+                currentUser = { uid: 'local-demo-user', email: 'Yerel demo modu' };
+                document.getElementById('auth-message').innerText = 'Firebase bağlantısı kurulamadı. Site yerel demo modda çalışıyor.';
+                updateAuthUI();
+                await loadUnknownWords();
+            }
+        }
+
+        function updateAuthUI() {
+            const signedOut = document.getElementById('auth-signed-out');
+            const signedIn = document.getElementById('auth-signed-in');
+            const dashboard = document.getElementById('user-dashboard');
+            const note = document.getElementById('question-note');
+
+            if (currentUser) {
+                signedOut.classList.add('hidden');
+                signedIn.classList.remove('hidden');
+                dashboard.classList.remove('hidden');
+                document.getElementById('user-email-pill').innerText = currentUser.email || 'Kullanıcı';
+                document.getElementById('signed-in-message').innerText = usingLocalDemo
+                    ? 'Yerel demo modu: notlar ve kelimeler sadece bu tarayıcıda saklanır.'
+                    : 'Notların ve kelime listen Firebase hesabına kaydediliyor.';
+                if (note) note.disabled = false;
+            } else {
+                signedOut.classList.remove('hidden');
+                signedIn.classList.add('hidden');
+                dashboard.classList.add('hidden');
+                if (note) note.disabled = true;
+                document.getElementById('auth-message').innerText = 'Not ve kelime listesi için giriş yap veya yeni hesap oluştur.';
+            }
+        }
+
+        async function handleRegister() {
+            if (!firebaseReady) {
+                showToast('Firebase anahtarları girilmeden kayıt açılamaz.');
+                return;
+            }
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+            if (!email || password.length < 6) {
+                showToast('E-posta ve en az 6 karakterlik şifre gir.');
+                return;
+            }
+            try {
+                await firebaseModules.createUserWithEmailAndPassword(auth, email, password);
+                showToast('Hesap oluşturuldu.');
+            } catch (error) {
+                showToast(firebaseErrorMessage(error));
+            }
+        }
+
+        async function handleLogin() {
+            if (!firebaseReady) {
+                showToast('Firebase anahtarları girilmeden giriş açılamaz.');
+                return;
+            }
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+            if (!email || !password) {
+                showToast('E-posta ve şifre gir.');
+                return;
+            }
+            try {
+                await firebaseModules.signInWithEmailAndPassword(auth, email, password);
+                showToast('Giriş yapıldı.');
+            } catch (error) {
+                showToast(firebaseErrorMessage(error));
+            }
+        }
+
+        async function handleLogout() {
+            if (usingLocalDemo) {
+                showToast('Yerel demo modunda çıkış gerekmez.');
+                return;
+            }
+            if (firebaseReady) {
+                await firebaseModules.signOut(auth);
+                showToast('Çıkış yapıldı.');
+            }
+        }
+
+        function firebaseErrorMessage(error) {
+            const code = error && error.code ? error.code : '';
+            if (code.includes('email-already-in-use')) return 'Bu e-posta zaten kayıtlı.';
+            if (code.includes('invalid-email')) return 'E-posta adresi geçersiz.';
+            if (code.includes('weak-password')) return 'Şifre en az 6 karakter olmalı.';
+            if (code.includes('invalid-credential') || code.includes('wrong-password') || code.includes('user-not-found')) return 'E-posta veya şifre hatalı.';
+            return 'İşlem tamamlanamadı. Firebase ayarlarını ve kurallarını kontrol et.';
+        }
+
+        function getQuestionId() {
+            return [currentTopic, currentBank, `q${currentQuestionIndex + 1}`]
+                .map((part) => String(part).toLowerCase().replace(/[^a-z0-9ğüşöçıİĞÜŞÖÇ]+/gi, '-').replace(/^-+|-+$/g, ''))
+                .join('__');
+        }
+
+        function localKey(type, id = '') {
+            const userId = currentUser ? currentUser.uid : 'signed-out';
+            return `proficiency:${type}:${userId}:${id}`;
+        }
+
+        function setupNoteAutosave() {
+            const note = document.getElementById('question-note');
+            if (!note) return;
+            note.addEventListener('input', () => {
+                clearTimeout(noteSaveTimer);
+                document.getElementById('note-status').innerText = 'Kaydediliyor...';
+                noteSaveTimer = setTimeout(saveCurrentNote, 600);
+            });
+        }
+
+        async function loadCurrentNote() {
+            const note = document.getElementById('question-note');
+            const status = document.getElementById('note-status');
+            if (!note || !status) return;
+
+            if (!currentUser) {
+                note.value = '';
+                note.disabled = true;
+                status.innerText = 'Not almak için giriş yapmalısın.';
+                return;
+            }
+
+            const questionId = getQuestionId();
+            note.disabled = false;
+            note.value = '';
+            status.innerText = 'Not yükleniyor...';
+
+            try {
+                if (firebaseReady && !usingLocalDemo) {
+                    const ref = firebaseModules.doc(db, 'users', currentUser.uid, 'questionNotes', questionId);
+                    const snap = await firebaseModules.getDoc(ref);
+                    if (questionId === getQuestionId()) note.value = snap.exists() ? (snap.data().note || '') : '';
+                } else {
+                    note.value = localStorage.getItem(localKey('note', questionId)) || '';
+                }
+                status.innerText = note.value ? 'Notun yüklendi.' : 'Bu soru için henüz not yok.';
+            } catch (error) {
+                console.error(error);
+                status.innerText = 'Not yüklenemedi.';
+            }
+        }
+
+        async function saveCurrentNote() {
+            const note = document.getElementById('question-note');
+            const status = document.getElementById('note-status');
+            if (!note || !status || !currentUser || !currentTopic || !currentBank) return;
+
+            const questionId = getQuestionId();
+            const qData = database[currentTopic].questionBanks[currentBank][currentQuestionIndex];
+            const payload = {
+                note: note.value,
+                topic: currentTopic,
+                bank: currentBank,
+                questionIndex: currentQuestionIndex,
+                questionText: qData.q,
+                updatedAt: new Date().toISOString()
+            };
+
+            try {
+                if (firebaseReady && !usingLocalDemo) {
+                    await firebaseModules.setDoc(
+                        firebaseModules.doc(db, 'users', currentUser.uid, 'questionNotes', questionId),
+                        { ...payload, updatedAt: firebaseModules.serverTimestamp() },
+                        { merge: true }
+                    );
+                } else {
+                    localStorage.setItem(localKey('note', questionId), note.value);
+                }
+                status.innerText = 'Not kaydedildi.';
+            } catch (error) {
+                console.error(error);
+                status.innerText = 'Not kaydedilemedi.';
+            }
+        }
+
+        async function loadUnknownWords() {
+            if (!currentUser) {
+                unknownWords = [];
+                unknownWordSet = new Set();
+                renderUnknownWords();
+                return;
+            }
+
+            try {
+                if (firebaseReady && !usingLocalDemo) {
+                    const col = firebaseModules.collection(db, 'users', currentUser.uid, 'unknownWords');
+                    const snap = await firebaseModules.getDocs(col);
+                    unknownWords = snap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+                } else {
+                    unknownWords = JSON.parse(localStorage.getItem(localKey('words')) || '[]');
+                }
+            } catch (error) {
+                console.error(error);
+                unknownWords = [];
+            }
+
+            unknownWords.sort((a, b) => String(a.word || '').localeCompare(String(b.word || '')));
+            unknownWordSet = new Set(unknownWords.map((item) => normalizeWord(item.word)));
+            renderUnknownWords();
+            markSavedWords();
+        }
+
+        async function addUnknownWord(rawWord) {
+            if (!currentUser) {
+                showToast('Kelime kaydetmek için giriş yapmalısın.');
+                return;
+            }
+
+            const word = cleanWord(rawWord);
+            const normalized = normalizeWord(word);
+            if (!normalized || normalized.length < 2) return;
+
+            const qData = currentTopic && currentBank ? database[currentTopic].questionBanks[currentBank][currentQuestionIndex] : {};
+            const item = {
+                id: safeDocId(normalized),
+                word,
+                normalized,
+                topic: currentTopic || '',
+                bank: currentBank || '',
+                questionIndex: currentQuestionIndex,
+                sourceQuestionId: currentTopic && currentBank ? getQuestionId() : '',
+                sourceQuestion: qData.q || '',
+                addedAt: new Date().toISOString()
+            };
+
+            try {
+                if (firebaseReady && !usingLocalDemo) {
+                    await firebaseModules.setDoc(
+                        firebaseModules.doc(db, 'users', currentUser.uid, 'unknownWords', item.id),
+                        { ...item, addedAt: firebaseModules.serverTimestamp() },
+                        { merge: true }
+                    );
+                } else {
+                    const map = new Map(unknownWords.map((stored) => [stored.normalized, stored]));
+                    map.set(normalized, item);
+                    localStorage.setItem(localKey('words'), JSON.stringify(Array.from(map.values())));
+                }
+                await loadUnknownWords();
+                showToast(`"${word}" kelime listene eklendi.`);
+            } catch (error) {
+                console.error(error);
+                showToast('Kelime kaydedilemedi.');
+            }
+        }
+
+        async function removeUnknownWord(wordId) {
+            if (!currentUser) return;
+            const decoded = decodeURIComponent(wordId);
+
+            try {
+                if (firebaseReady && !usingLocalDemo) {
+                    await firebaseModules.deleteDoc(firebaseModules.doc(db, 'users', currentUser.uid, 'unknownWords', wordId));
+                } else {
+                    unknownWords = unknownWords.filter((item) => item.id !== wordId && item.normalized !== decoded);
+                    localStorage.setItem(localKey('words'), JSON.stringify(unknownWords));
+                }
+                await loadUnknownWords();
+                showToast('Kelime listeden çıkarıldı.');
+            } catch (error) {
+                console.error(error);
+                showToast('Kelime silinemedi.');
+            }
+        }
+
+        function renderUnknownWords() {
+            const containers = [document.getElementById('dashboard-words-list'), document.getElementById('quiz-words-list')];
+            for (const container of containers) {
+                if (!container) continue;
+                container.innerHTML = '';
+                if (!currentUser) {
+                    container.innerHTML = '<span class="auth-message">Liste için giriş yapmalısın.</span>';
+                    continue;
+                }
+                if (unknownWords.length === 0) {
+                    container.innerHTML = '<span class="auth-message">Henüz kelime eklenmedi.</span>';
+                    continue;
+                }
+                unknownWords.forEach((item) => {
+                    const chip = document.createElement('span');
+                    chip.className = 'word-chip';
+                    chip.innerHTML = `<span>${escapeHtml(item.word)}</span>`;
+                    const remove = document.createElement('button');
+                    remove.className = 'word-remove';
+                    remove.type = 'button';
+                    remove.innerText = '×';
+                    remove.title = 'Kelimeyi sil';
+                    remove.onclick = () => removeUnknownWord(item.id || safeDocId(item.normalized));
+                    chip.appendChild(remove);
+                    container.appendChild(chip);
+                });
+            }
+        }
+
+        function makeWordsClickable(root) {
+            if (!root) return;
+            const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+                acceptNode(node) {
+                    if (!node.nodeValue || !/[A-Za-z]/.test(node.nodeValue)) return NodeFilter.FILTER_REJECT;
+                    if (node.parentElement && node.parentElement.closest('.word-token, textarea, input')) return NodeFilter.FILTER_REJECT;
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+            });
+
+            const nodes = [];
+            while (walker.nextNode()) nodes.push(walker.currentNode);
+
+            nodes.forEach((node) => {
+                const fragment = document.createDocumentFragment();
+                const text = node.nodeValue;
+                const regex = /[A-Za-z][A-Za-z'’.-]*[A-Za-z]/g;
+                let lastIndex = 0;
+                let match;
+
+                while ((match = regex.exec(text)) !== null) {
+                    fragment.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+                    const span = document.createElement('span');
+                    span.className = 'word-token';
+                    span.dataset.word = match[0];
+                    span.title = 'Bilmediğim kelimelere ekle';
+                    span.textContent = match[0];
+                    span.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        addUnknownWord(span.dataset.word);
+                    });
+                    fragment.appendChild(span);
+                    lastIndex = regex.lastIndex;
+                }
+
+                fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
+                node.parentNode.replaceChild(fragment, node);
+            });
+
+            markSavedWords(root);
+        }
+
+        function markSavedWords(root = document) {
+            root.querySelectorAll('.word-token').forEach((token) => {
+                const normalized = normalizeWord(token.dataset.word);
+                token.classList.toggle('saved-word', unknownWordSet.has(normalized));
+            });
+        }
+
+        function cleanWord(value) {
+            return String(value || '').replace(/^[^A-Za-z]+|[^A-Za-z]+$/g, '');
+        }
+
+        function normalizeWord(value) {
+            return cleanWord(value).toLowerCase();
+        }
+
+        function safeDocId(value) {
+            return encodeURIComponent(String(value || '').toLowerCase());
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            clearTimeout(toastTimer);
+            toast.innerText = message;
+            toast.classList.add('visible');
+            toastTimer = setTimeout(() => toast.classList.remove('visible'), 2200);
+        }
+
         function showScreen(screenId) {
             document.getElementById('screen-topics').classList.add('hidden');
             document.getElementById('screen-banks').classList.add('hidden');
@@ -285,6 +933,7 @@
         window.onload = async function() {
             // Kaydedilmiş temayı yükle
             loadSavedTheme();
+            await initFirebase();
 
             try {
                 const response = await fetch('data.json');
@@ -371,11 +1020,14 @@
             if (qData.context) {
                 contextBox.innerHTML = qData.context;
                 contextBox.style.display = 'block';
+                makeWordsClickable(contextBox);
             } else {
                 contextBox.style.display = 'none';
             }
 
-            document.getElementById('question-text').innerHTML = qData.q;
+            const questionText = document.getElementById('question-text');
+            questionText.innerHTML = qData.q;
+            makeWordsClickable(questionText);
             
             const optionsContainer = document.getElementById('options-container');
             optionsContainer.innerHTML = ''; 
@@ -383,7 +1035,8 @@
             qData.options.forEach((opt, index) => {
                 let btn = document.createElement('button');
                 btn.className = 'option';
-                btn.innerText = opt;
+                btn.innerHTML = escapeHtml(opt);
+                makeWordsClickable(btn);
                 
                 if (userAnswers[currentQuestionIndex] !== null) {
                     btn.disabled = true;
@@ -401,10 +1054,12 @@
 
             if (userAnswers[currentQuestionIndex] !== null) {
                 document.getElementById('explanation-text').innerHTML = qData.explanation;
+                makeWordsClickable(document.getElementById('explanation-text'));
                 document.getElementById('explanation-box').style.display = 'block';
             } else {
                 document.getElementById('explanation-box').style.display = 'none';
             }
+            loadCurrentNote();
         }
 
         function checkAnswer(selectedIndex, btnElement) {
@@ -427,6 +1082,7 @@
             }
 
             document.getElementById('explanation-text').innerHTML = qData.explanation;
+            makeWordsClickable(document.getElementById('explanation-text'));
             document.getElementById('explanation-box').style.display = 'block';
         }
 
