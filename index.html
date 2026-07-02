@@ -48,14 +48,6 @@
             </div>
         </div>
 
-        <div class="user-dashboard hidden" id="user-dashboard">
-            <div class="dashboard-title">
-                <span>Bilmediğim Kelimeler</span>
-                <button class="theme-toggle-btn" onclick="loadUnknownWords()">Yenile</button>
-            </div>
-            <div class="word-list" id="dashboard-words-list"></div>
-        </div>
-
         <div id="screen-topics">
             <div class="subtitle" id="loading-text">Soru havuzları yükleniyor...</div>
             <div class="home-actions">
@@ -67,7 +59,7 @@
 
         <div id="screen-words" class="hidden library-screen">
             <div class="library-title">Kelimelerim</div>
-            <div class="word-help">Soru metinlerinde, seçeneklerde veya açıklamalarda bilmediğin kelimenin üstüne sağ tıklayarak buraya ekleyebilirsin.</div>
+            <div class="word-help">Soru metinlerinde, seçeneklerde veya açıklamalarda bilmediğin kelimeyi eklemek için mouse kullanıyorsan sağ tıkla; dokunmatik ekrandaysan kelimenin üstüne basılı tut.</div>
             <div class="word-list word-list-full" id="words-screen-list"></div>
             <button class="return-btn" onclick="goHome()" style="width: 100%; background-color: var(--btn-bg); color: var(--text-main); border: 2px solid var(--border-color);">Ana Menüye Dön</button>
         </div>
@@ -110,7 +102,7 @@
                     <div class="tool-title">
                         <span>Bilmediğim Kelimeler</span>
                     </div>
-                    <div class="word-help" id="word-help">Metindeki, seçeneklerdeki veya açıklamadaki kelimeleri sağ tıklayarak listeye ekleyebilirsin.</div>
+                    <div class="word-help" id="word-help">Bu soru için eklediğin kelimeler burada görünür. Mouse kullanıyorsan sağ tıkla; dokunmatik ekrandaysan kelimenin üstüne basılı tut.</div>
                     <div class="word-list" id="quiz-words-list"></div>
                 </div>
             </div>

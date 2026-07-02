@@ -124,13 +124,11 @@
         function updateAuthUI() {
             const signedOut = document.getElementById('auth-signed-out');
             const signedIn = document.getElementById('auth-signed-in');
-            const dashboard = document.getElementById('user-dashboard');
             const note = document.getElementById('question-note');
 
             if (currentUser) {
                 signedOut.classList.add('hidden');
                 signedIn.classList.remove('hidden');
-                dashboard.classList.remove('hidden');
                 document.getElementById('user-email-pill').innerText = currentUser.email || 'Kullanıcı';
                 document.getElementById('signed-in-message').innerText = usingLocalDemo
                     ? 'Yerel demo modu: notlar ve kelimeler sadece bu tarayıcıda saklanır.'
@@ -139,7 +137,6 @@
             } else {
                 signedOut.classList.remove('hidden');
                 signedIn.classList.add('hidden');
-                dashboard.classList.add('hidden');
                 if (note) note.disabled = true;
                 document.getElementById('auth-message').innerText = 'Not ve kelime listesi için giriş yap veya yeni hesap oluştur.';
             }
@@ -474,12 +471,13 @@
             const word = cleanWord(rawWord);
             const normalized = normalizeWord(word);
             if (!normalized || normalized.length < 2) return;
-            if (unknownWordSet.has(normalized)) {
-                showToast(`"${word}" zaten kelime listende.`);
-                return;
-            }
 
             const qData = currentTopic && currentBank ? database[currentTopic].questionBanks[currentBank][currentQuestionIndex] : {};
+            const currentQuestionId = currentTopic && currentBank ? getQuestionId() : '';
+            const existingItem = unknownWords.find((stored) => normalizeWord(stored.word) === normalized || stored.normalized === normalized);
+            const sourceQuestionIds = new Set(existingItem && Array.isArray(existingItem.sourceQuestionIds) ? existingItem.sourceQuestionIds : []);
+            if (existingItem && existingItem.sourceQuestionId) sourceQuestionIds.add(existingItem.sourceQuestionId);
+            if (currentQuestionId) sourceQuestionIds.add(currentQuestionId);
             const item = {
                 id: safeDocId(normalized),
                 word,
@@ -487,7 +485,8 @@
                 topic: currentTopic || '',
                 bank: currentBank || '',
                 questionIndex: currentQuestionIndex,
-                sourceQuestionId: currentTopic && currentBank ? getQuestionId() : '',
+                sourceQuestionId: currentQuestionId,
+                sourceQuestionIds: Array.from(sourceQuestionIds),
                 sourceQuestion: qData.q || '',
                 addedAt: new Date().toISOString()
             };
@@ -533,7 +532,6 @@
 
         function renderUnknownWords() {
             const containers = [
-                document.getElementById('dashboard-words-list'),
                 document.getElementById('quiz-words-list'),
                 document.getElementById('words-screen-list')
             ];
@@ -544,11 +542,18 @@
                     container.innerHTML = '<span class="auth-message">Liste için giriş yapmalısın.</span>';
                     continue;
                 }
-                if (unknownWords.length === 0) {
-                    container.innerHTML = '<span class="auth-message">Henüz kelime eklenmedi.</span>';
+                const visibleWords = container.id === 'quiz-words-list' && currentTopic && currentBank
+                    ? unknownWords.filter((item) => wordBelongsToCurrentQuestion(item))
+                    : unknownWords;
+                const emptyMessage = container.id === 'quiz-words-list'
+                    ? 'Bu soru için henüz kelime eklenmedi.'
+                    : 'Henüz kelime eklenmedi.';
+
+                if (visibleWords.length === 0) {
+                    container.appendChild(emptyState(emptyMessage));
                     continue;
                 }
-                unknownWords.forEach((item) => {
+                visibleWords.forEach((item) => {
                     const chip = document.createElement('span');
                     chip.className = 'word-chip';
                     chip.innerHTML = `<span>${escapeHtml(item.word)}</span>`;
@@ -562,6 +567,13 @@
                     container.appendChild(chip);
                 });
             }
+        }
+
+        function wordBelongsToCurrentQuestion(item) {
+            const questionId = getQuestionId();
+            if (!questionId || !item) return false;
+            if (item.sourceQuestionId === questionId) return true;
+            return Array.isArray(item.sourceQuestionIds) && item.sourceQuestionIds.includes(questionId);
         }
 
         function makeWordsClickable(root) {
@@ -589,7 +601,7 @@
                     const span = document.createElement('span');
                     span.className = 'word-token';
                     span.dataset.word = match[0];
-                    span.title = 'Kelime listesine eklemek için sağ tıkla';
+                    span.title = 'Mouse ile sağ tıkla, dokunmatik ekranda basılı tut';
                     span.textContent = match[0];
                     span.addEventListener('contextmenu', (event) => {
                         event.preventDefault();
@@ -823,6 +835,7 @@
             } else {
                 document.getElementById('explanation-box').style.display = 'none';
             }
+            renderUnknownWords();
             loadCurrentNote();
         }
 
