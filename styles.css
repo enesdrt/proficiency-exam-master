@@ -219,14 +219,49 @@
         .word-chip {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             border: 1px solid var(--border-color);
             background: var(--app-bg);
             color: var(--text-main);
-            border-radius: 999px;
-            padding: 6px 8px 6px 10px;
+            border-radius: 8px;
+            padding: 8px;
             font-size: 14px;
             font-weight: 700;
+            max-width: 100%;
+        }
+        .word-chip-text {
+            display: grid;
+            gap: 2px;
+            min-width: 0;
+        }
+        .word-chip-word {
+            color: var(--text-main);
+            line-height: 1.2;
+        }
+        .word-chip-meaning {
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.25;
+            overflow-wrap: anywhere;
+        }
+        .word-chip-meaning.empty {
+            font-style: italic;
+            font-weight: 500;
+        }
+        .word-meaning-edit {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--btn-bg);
+            color: var(--text-main);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 6px 8px;
+            white-space: nowrap;
+        }
+        .word-meaning-edit:hover {
+            background: var(--btn-hover);
         }
         .word-remove {
             width: 20px;

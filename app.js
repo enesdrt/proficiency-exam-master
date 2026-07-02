@@ -483,6 +483,9 @@
                 id: safeDocId(normalized),
                 word,
                 normalized,
+                meaning: existingItem ? (existingItem.meaning || '') : '',
+                meaningSource: existingItem ? (existingItem.meaningSource || '') : '',
+                translationStatus: existingItem ? (existingItem.translationStatus || 'needs-translation') : 'needs-translation',
                 topic: currentTopic || '',
                 bank: currentBank || '',
                 questionIndex: currentQuestionIndex,
@@ -531,6 +534,50 @@
             }
         }
 
+        async function editWordMeaning(wordId, currentMeaning = '') {
+            if (!currentUser) {
+                showToast('Anlam eklemek için giriş yapmalısın.');
+                return;
+            }
+
+            const decodedId = decodeURIComponent(wordId);
+            const item = unknownWords.find((stored) => (stored.id || safeDocId(stored.normalized)) === wordId || stored.normalized === decodedId);
+            const word = item ? item.word : decodedId;
+            const nextMeaning = window.prompt(`"${word}" kelimesinin Türkçe anlamı:`, currentMeaning || '');
+            if (nextMeaning === null) return;
+
+            const meaning = nextMeaning.trim();
+            const payload = {
+                meaning,
+                meaningSource: meaning ? 'manual' : '',
+                translationStatus: meaning ? 'done' : 'needs-translation',
+                meaningUpdatedAt: new Date().toISOString()
+            };
+
+            try {
+                if (firebaseReady && !usingLocalDemo) {
+                    await firebaseModules.setDoc(
+                        firebaseModules.doc(db, 'users', currentUser.uid, 'unknownWords', wordId),
+                        { ...payload, meaningUpdatedAt: firebaseModules.serverTimestamp() },
+                        { merge: true }
+                    );
+                } else {
+                    unknownWords = unknownWords.map((stored) => {
+                        const storedId = stored.id || safeDocId(stored.normalized);
+                        return storedId === wordId || stored.normalized === decodedId
+                            ? { ...stored, ...payload }
+                            : stored;
+                    });
+                    localStorage.setItem(localKey('words'), JSON.stringify(unknownWords));
+                }
+                await loadUnknownWords();
+                showToast(meaning ? 'Anlam kaydedildi.' : 'Anlam temizlendi.');
+            } catch (error) {
+                console.error(error);
+                showToast('Anlam kaydedilemedi.');
+            }
+        }
+
         function renderUnknownWords() {
             const containers = [
                 document.getElementById('quiz-words-list'),
@@ -557,13 +604,36 @@
                 visibleWords.forEach((item) => {
                     const chip = document.createElement('span');
                     chip.className = 'word-chip';
-                    chip.innerHTML = `<span>${escapeHtml(item.word)}</span>`;
+
+                    const text = document.createElement('span');
+                    text.className = 'word-chip-text';
+
+                    const wordText = document.createElement('span');
+                    wordText.className = 'word-chip-word';
+                    wordText.textContent = item.word || '';
+
+                    const meaningText = document.createElement('span');
+                    meaningText.className = item.meaning ? 'word-chip-meaning' : 'word-chip-meaning empty';
+                    meaningText.textContent = item.meaning || 'Türkçe anlam eklenmedi';
+
+                    text.appendChild(wordText);
+                    text.appendChild(meaningText);
+
+                    const edit = document.createElement('button');
+                    edit.className = 'word-meaning-edit';
+                    edit.type = 'button';
+                    edit.textContent = item.meaning ? 'Düzenle' : 'Anlam ekle';
+                    edit.title = 'Türkçe anlamı düzenle';
+                    edit.onclick = () => editWordMeaning(item.id || safeDocId(item.normalized), item.meaning || '');
+
                     const remove = document.createElement('button');
                     remove.className = 'word-remove';
                     remove.type = 'button';
                     remove.innerText = '×';
                     remove.title = 'Kelimeyi sil';
                     remove.onclick = () => removeUnknownWord(item.id || safeDocId(item.normalized));
+                    chip.appendChild(text);
+                    chip.appendChild(edit);
                     chip.appendChild(remove);
                     container.appendChild(chip);
                 });
