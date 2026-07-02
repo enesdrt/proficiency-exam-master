@@ -1,0 +1,412 @@
+/* TEMA DEĞİŞKENLERİ (Açık ve Koyu Mod İçin) */
+        :root {
+            --bg-color: #f4f7f6;
+            --app-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #6c757d;
+            --border-color: #e9ecef;
+            --btn-bg: #f8f9fa;
+            --btn-hover: #e2e8f0;
+            --context-bg: #eef2f5;
+            
+            /* Açık Mod Açıklama Kutusu Renkleri */
+            --explanation-bg: #fff3cd;
+            --explanation-text: #856404;
+            --explanation-border: #ffc107;
+        }
+
+        /* KOYU MOD (Dark Mode) RENKLERİ */
+        body.dark-mode {
+            --bg-color: #121212;
+            --app-bg: #1e1e2f;
+            --text-main: #e0e0e0;
+            --text-muted: #a0a0b0;
+            --border-color: #333344;
+            --btn-bg: #2a2a40;
+            --btn-hover: #3a3a55;
+            --context-bg: #252538;
+            
+            /* Koyu Mod Açıklama Kutusu Renkleri (Göz Yormayan) */
+            --explanation-bg: #292938;
+            --explanation-text: #d1d5db;
+            --explanation-border: #4299e1;
+        }
+
+        /* Genel Sayfa Ayarları */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--bg-color); 
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; margin: 0; 
+            color: var(--text-main); 
+            padding: 20px; box-sizing: border-box; 
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .app-container { 
+            background-color: var(--app-bg); 
+            padding: 40px; border-radius: 12px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
+            width: 100%; max-width: 800px; 
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+        
+        /* Tema Kontrol Paneli (Sağ Üst) */
+        .theme-controls {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .color-picker {
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 0;
+            background: none;
+        }
+        .theme-toggle-btn {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .theme-toggle-btn:hover { background-color: var(--btn-hover); }
+
+        /* Kullanıcı hesabı, notlar ve kelime listesi */
+        .auth-panel {
+            border: 1px solid var(--border-color);
+            background: var(--btn-bg);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 20px;
+            display: grid;
+            gap: 12px;
+        }
+        .auth-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .auth-row input {
+            flex: 1 1 180px;
+            min-width: 0;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--app-bg);
+            color: var(--text-main);
+            font-size: 14px;
+        }
+        .auth-btn {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-weight: 700;
+            color: white;
+            background: #2563eb;
+        }
+        .auth-btn.secondary { background: #16a34a; }
+        .auth-btn.muted { background: #64748b; }
+        .auth-btn:disabled { background: #94a3b8; cursor: not-allowed; }
+        .auth-message {
+            color: var(--text-muted);
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .user-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 999px;
+            background: var(--app-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-weight: 700;
+        }
+        .user-dashboard {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 20px;
+            background: var(--context-bg);
+        }
+        .dashboard-title, .tool-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+        .home-actions {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .quick-action-btn {
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 800;
+            padding: 14px 16px;
+            transition: transform 0.15s ease, filter 0.15s ease;
+        }
+        .quick-action-btn:hover {
+            filter: brightness(0.95);
+            transform: translateY(-1px);
+        }
+        .quick-action-btn.words { background: #2563eb; }
+        .quick-action-btn.notes { background: #16a34a; }
+        .study-tools {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .tool-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px;
+            background: var(--btn-bg);
+        }
+        .note-area {
+            width: 100%;
+            min-height: 120px;
+            resize: vertical;
+            box-sizing: border-box;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--app-bg);
+            color: var(--text-main);
+            font: inherit;
+            line-height: 1.5;
+        }
+        .note-status, .word-help {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+        .word-token {
+            cursor: context-menu;
+            border-radius: 3px;
+            transition: background-color 0.15s ease, color 0.15s ease;
+        }
+        .word-token:hover {
+            background: rgba(37, 99, 235, 0.14);
+        }
+        .word-token.saved-word {
+            background: rgba(22, 163, 74, 0.16);
+        }
+        .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 170px;
+            overflow-y: auto;
+            padding-top: 4px;
+        }
+        .word-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--app-bg);
+            color: var(--text-main);
+            border-radius: 999px;
+            padding: 6px 8px 6px 10px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .word-remove {
+            width: 20px;
+            height: 20px;
+            border: none;
+            border-radius: 50%;
+            background: #ef4444;
+            color: white;
+            cursor: pointer;
+            line-height: 1;
+            font-weight: 800;
+        }
+        .library-screen {
+            display: grid;
+            gap: 16px;
+        }
+        .library-title {
+            color: var(--text-main);
+            font-size: 24px;
+            font-weight: 800;
+            text-align: center;
+        }
+        .word-list-full {
+            align-content: flex-start;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            max-height: 420px;
+            min-height: 180px;
+            padding: 14px;
+            background: var(--context-bg);
+        }
+        .note-list {
+            display: grid;
+            gap: 12px;
+            max-height: 520px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .note-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--btn-bg);
+            padding: 14px;
+            display: grid;
+            gap: 8px;
+        }
+        .note-card-title {
+            color: var(--text-main);
+            font-size: 15px;
+            font-weight: 800;
+        }
+        .note-meta {
+            color: var(--text-muted);
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .note-question {
+            color: var(--text-main);
+            font-size: 14px;
+            line-height: 1.45;
+        }
+        .note-text {
+            background: var(--app-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 10px;
+            white-space: pre-wrap;
+        }
+        .note-open-btn {
+            justify-self: start;
+            border: none;
+            border-radius: 8px;
+            background: #6f42c1;
+            color: white;
+            cursor: pointer;
+            font-weight: 800;
+            padding: 9px 12px;
+        }
+        .note-open-btn:hover {
+            background: #59339d;
+        }
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            transform: translateX(-50%);
+            background: #111827;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, bottom 0.2s ease;
+            z-index: 10;
+            font-weight: 700;
+        }
+        .toast.visible {
+            opacity: 1;
+            bottom: 34px;
+        }
+
+        /* Üst Menü / Navigasyon Barı */
+        .header-container { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px; margin-top: 20px; }
+        .header-left, .header-right { display: flex; gap: 10px; flex: 1; }
+        .header-left { justify-content: flex-start; }
+        .header-right { justify-content: flex-end; }
+        .header-container h1 { margin: 0; padding: 0; font-size: 24px; color: var(--text-main); text-align: center; flex: 2; }
+
+        /* Navigasyon Butonları */
+        button.nav-btn, button.home-btn, button.test-select-btn { padding: 10px 15px; font-size: 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background-color 0.2s; white-space: nowrap; }
+        button.nav-btn { background-color: #007bff; color: white; }
+        button.nav-btn:hover:not(:disabled) { background-color: #0056b3; }
+        button.nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        button.home-btn { background-color: #e74c3c; color: white; }
+        button.home-btn:hover { background-color: #c0392b; }
+        button.test-select-btn { background-color: #6f42c1; color: white; }
+        button.test-select-btn:hover { background-color: #59339d; }
+
+        .subtitle { color: var(--text-muted); font-size: 16px; margin-bottom: 20px; text-align: center; font-weight: 600; }
+        
+        /* Konu Seçim Ekranı */
+        #topics-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .topic-btn { padding: 15px; background-color: var(--btn-bg); color: var(--text-main); border: 2px solid var(--border-color); border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: left; }
+        .topic-btn:hover { background-color: var(--btn-hover); border-color: #cbd5e1; }
+        
+        /* Menü Butonları */
+        .mode-buttons { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 30px; }
+        .mode-btn { padding: 18px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; color: white; transition: background-color 0.2s; }
+        .mode-btn.quiz { background-color: #6f42c1; } .mode-btn.quiz:hover:not(:disabled) { background-color: #59339d; }
+        .mode-btn:disabled { background-color: #bdc3c7 !important; cursor: not-allowed; color: #7f8c8d; }
+        
+        /* Okuma Parçası / Bağlam Kutusu */
+        .context-box { background-color: var(--context-bg); padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; font-size: 15px; color: var(--text-main); border-left: 4px solid #3498db; max-height: 250px; overflow-y: auto; display: none; line-height: 1.6; }
+
+        /* Soru Tasarımı */
+        .question { font-size: 18px; margin-bottom: 20px; font-weight: 600; white-space: pre-wrap; color: var(--text-main); }
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        button.option { padding: 15px 20px; border: 2px solid var(--border-color); background-color: var(--btn-bg); color: var(--text-main); border-radius: 8px; cursor: pointer; font-size: 16px; text-align: left; transition: all 0.2s ease; }
+        button.option:hover:not(:disabled) { background-color: var(--btn-hover); }
+        button.option.correct { background-color: #d4edda !important; border-color: #28a745 !important; color: #155724 !important; font-weight: bold; }
+        button.option.incorrect { background-color: #f8d7da !important; border-color: #dc3545 !important; color: #721c24 !important; }
+        button.option:disabled { cursor: not-allowed; }
+        
+        /* Açıklama Kutusu (Güncellendi) */
+        .explanation-box { 
+            margin-top: 20px; 
+            padding: 15px; 
+            background-color: var(--explanation-bg); 
+            border-left: 5px solid var(--explanation-border); 
+            border-radius: 4px; 
+            font-size: 15px; 
+            color: var(--explanation-text); 
+            display: none; 
+            line-height: 1.5; 
+        }
+        
+        .score-container { text-align: center; } .score-container h2 { font-size: 32px; margin-bottom: 20px; color: var(--text-main); }
+        .return-btn { padding: 12px 24px; background-color: #6c757d; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; margin-top: 20px; }
+        .start-quiz-btn { width: 100%; padding: 15px; background-color: #28a745; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top:15px; }
+        
+        .hidden { display: none !important; }
+
+        /* Mobil Uyum */
+        @media (max-width: 768px) { 
+            #topics-container { grid-template-columns: 1fr; } 
+            .home-actions { grid-template-columns: 1fr; }
+            .study-tools { grid-template-columns: 1fr; }
+            .header-container { flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 40px; }
+            .header-container h1 { flex: 100%; order: -1; } 
+            .header-left, .header-right { flex: auto; justify-content: center; }
+            .theme-controls { top: 10px; right: 10px; }
+        }
