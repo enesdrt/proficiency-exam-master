@@ -45,6 +45,7 @@
         let currentQuestionIndex = 0;
         let score = 0;
         let userAnswers = [];
+        let openedFromNotes = false;
 
         // Firebase bilgilerini buraya dolduracaksın. Boş bırakılırsa site yerel demo modda çalışır.
         const firebaseConfig = {
@@ -667,6 +668,8 @@
             if(screenId === 'screen-quiz') {
                 document.getElementById('header-left-controls').style.display = 'flex';
                 document.getElementById('header-right-controls').style.display = 'flex';
+                const notesReturnButton = document.getElementById('notes-return-btn');
+                if (notesReturnButton) notesReturnButton.style.display = openedFromNotes ? 'inline-block' : 'none';
             } else {
                 document.getElementById('header-left-controls').style.display = 'none';
                 document.getElementById('header-right-controls').style.display = 'none';
@@ -702,10 +705,12 @@
 
         function selectTopic(topic) {
             currentTopic = topic;
+            openedFromNotes = false;
             showBanks();
         }
 
         function goHome() {
+            openedFromNotes = false;
             showScreen('screen-topics');
         }
 
@@ -737,6 +742,7 @@
             currentQuestionIndex = targetIndex;
             score = 0;
             userAnswers = new Array(questions.length).fill(null);
+            openedFromNotes = true;
 
             showScreen('screen-quiz');
             loadQuestion();
@@ -770,6 +776,7 @@
             currentBank = selectedBank;
             currentQuestionIndex = 0;
             score = 0;
+            openedFromNotes = false;
             
             const totalQ = database[currentTopic].questionBanks[currentBank].length;
             userAnswers = new Array(totalQ).fill(null); 

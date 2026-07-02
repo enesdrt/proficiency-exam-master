@@ -340,7 +340,7 @@
         .header-container h1 { margin: 0; padding: 0; font-size: 24px; color: var(--text-main); text-align: center; flex: 2; }
 
         /* Navigasyon Butonları */
-        button.nav-btn, button.home-btn, button.test-select-btn { padding: 10px 15px; font-size: 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background-color 0.2s; white-space: nowrap; }
+        button.nav-btn, button.home-btn, button.test-select-btn, button.notes-return-btn { padding: 10px 15px; font-size: 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background-color 0.2s; white-space: nowrap; }
         button.nav-btn { background-color: #007bff; color: white; }
         button.nav-btn:hover:not(:disabled) { background-color: #0056b3; }
         button.nav-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
@@ -348,6 +348,8 @@
         button.home-btn:hover { background-color: #c0392b; }
         button.test-select-btn { background-color: #6f42c1; color: white; }
         button.test-select-btn:hover { background-color: #59339d; }
+        button.notes-return-btn { background-color: #16a34a; color: white; }
+        button.notes-return-btn:hover { background-color: #15803d; }
 
         .subtitle { color: var(--text-muted); font-size: 16px; margin-bottom: 20px; text-align: center; font-weight: 600; }
         
