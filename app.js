@@ -68,6 +68,7 @@
         let savedNotes = [];
         let noteSaveTimer = null;
         let toastTimer = null;
+        const dictionaryApiBase = 'https://api.dictionaryapi.dev/api/v2/entries/en/';
 
         function isFirebaseConfigured() {
             return Boolean(firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId && firebaseConfig.appId);
@@ -486,6 +487,12 @@
                 meaning: existingItem ? (existingItem.meaning || '') : '',
                 meaningSource: existingItem ? (existingItem.meaningSource || '') : '',
                 translationStatus: existingItem ? (existingItem.translationStatus || 'needs-translation') : 'needs-translation',
+                englishDefinition: existingItem ? (existingItem.englishDefinition || '') : '',
+                definitionExample: existingItem ? (existingItem.definitionExample || '') : '',
+                definitionPartOfSpeech: existingItem ? (existingItem.definitionPartOfSpeech || '') : '',
+                phonetic: existingItem ? (existingItem.phonetic || '') : '',
+                definitionSource: existingItem ? (existingItem.definitionSource || '') : '',
+                definitionStatus: existingItem ? (existingItem.definitionStatus || 'needs-definition') : 'needs-definition',
                 topic: currentTopic || '',
                 bank: currentBank || '',
                 questionIndex: currentQuestionIndex,
@@ -508,10 +515,102 @@
                     localStorage.setItem(localKey('words'), JSON.stringify(Array.from(map.values())));
                 }
                 await loadUnknownWords();
+                if (shouldFetchEnglishDefinition(existingItem || item)) {
+                    fetchAndSaveEnglishDefinition(item.id, word, { silent: true }).catch((error) => console.error(error));
+                }
                 showToast(`"${word}" kelime listene eklendi.`);
             } catch (error) {
                 console.error(error);
                 showToast('Kelime kaydedilemedi.');
+            }
+        }
+
+        function shouldFetchEnglishDefinition(item) {
+            if (!item) return true;
+            if (item.englishDefinition) return false;
+            return item.definitionStatus !== 'not-found' && item.definitionStatus !== 'loading';
+        }
+
+        async function fetchAndSaveEnglishDefinition(wordId, rawWord, options = {}) {
+            if (!currentUser) return;
+            const word = cleanWord(rawWord);
+            if (!word) return;
+
+            try {
+                await saveWordDefinition(wordId, {
+                    definitionStatus: 'loading',
+                    definitionUpdatedAt: new Date().toISOString()
+                });
+                await loadUnknownWords();
+
+                const data = await fetchDictionaryDefinition(word);
+                const payload = {
+                    englishDefinition: data.englishDefinition,
+                    definitionExample: data.definitionExample,
+                    definitionPartOfSpeech: data.definitionPartOfSpeech,
+                    phonetic: data.phonetic,
+                    definitionSource: 'free-dictionary-api',
+                    definitionStatus: data.englishDefinition ? 'found' : 'not-found',
+                    definitionUpdatedAt: new Date().toISOString()
+                };
+
+                await saveWordDefinition(wordId, payload);
+                await loadUnknownWords();
+                if (!options.silent) {
+                    showToast(payload.englishDefinition ? 'İngilizce açıklama eklendi.' : 'İngilizce açıklama bulunamadı.');
+                }
+            } catch (error) {
+                console.error(error);
+                await saveWordDefinition(wordId, {
+                    definitionStatus: 'error',
+                    definitionUpdatedAt: new Date().toISOString()
+                });
+                await loadUnknownWords();
+                if (!options.silent) showToast('İngilizce açıklama alınamadı.');
+            }
+        }
+
+        async function fetchDictionaryDefinition(word) {
+            const response = await fetch(`${dictionaryApiBase}${encodeURIComponent(word.toLowerCase())}`);
+            if (response.status === 404) {
+                return {
+                    englishDefinition: '',
+                    definitionExample: '',
+                    definitionPartOfSpeech: '',
+                    phonetic: ''
+                };
+            }
+            if (!response.ok) throw new Error(`Dictionary API error: ${response.status}`);
+
+            const entries = await response.json();
+            const entry = Array.isArray(entries) ? entries[0] : null;
+            const meaning = entry && Array.isArray(entry.meanings) ? entry.meanings[0] : null;
+            const definition = meaning && Array.isArray(meaning.definitions) ? meaning.definitions[0] : null;
+
+            return {
+                englishDefinition: definition ? (definition.definition || '') : '',
+                definitionExample: definition ? (definition.example || '') : '',
+                definitionPartOfSpeech: meaning ? (meaning.partOfSpeech || '') : '',
+                phonetic: entry ? (entry.phonetic || '') : ''
+            };
+        }
+
+        async function saveWordDefinition(wordId, payload) {
+            if (firebaseReady && !usingLocalDemo) {
+                await firebaseModules.setDoc(
+                    firebaseModules.doc(db, 'users', currentUser.uid, 'unknownWords', wordId),
+                    { ...payload, definitionUpdatedAt: firebaseModules.serverTimestamp() },
+                    { merge: true }
+                );
+            } else {
+                const decodedId = decodeURIComponent(wordId);
+                unknownWords = unknownWords.map((stored) => {
+                    const storedId = stored.id || safeDocId(stored.normalized);
+                    return storedId === wordId || stored.normalized === decodedId
+                        ? { ...stored, ...payload }
+                        : stored;
+                });
+                localStorage.setItem(localKey('words'), JSON.stringify(unknownWords));
             }
         }
 
@@ -616,8 +715,21 @@
                     meaningText.className = item.meaning ? 'word-chip-meaning' : 'word-chip-meaning empty';
                     meaningText.textContent = item.meaning || 'Türkçe anlam eklenmedi';
 
+                    const definitionText = document.createElement('span');
+                    definitionText.className = item.englishDefinition ? 'word-chip-definition' : 'word-chip-definition empty';
+                    definitionText.textContent = formatEnglishDefinition(item);
+
                     text.appendChild(wordText);
+                    text.appendChild(definitionText);
                     text.appendChild(meaningText);
+
+                    const definitionButton = document.createElement('button');
+                    definitionButton.className = 'word-definition-fetch';
+                    definitionButton.type = 'button';
+                    definitionButton.disabled = item.definitionStatus === 'loading';
+                    definitionButton.textContent = definitionButtonLabel(item);
+                    definitionButton.title = 'Free Dictionary API ile İngilizce açıklama getir';
+                    definitionButton.onclick = () => fetchAndSaveEnglishDefinition(item.id || safeDocId(item.normalized), item.word || '', { silent: false });
 
                     const edit = document.createElement('button');
                     edit.className = 'word-meaning-edit';
@@ -633,11 +745,30 @@
                     remove.title = 'Kelimeyi sil';
                     remove.onclick = () => removeUnknownWord(item.id || safeDocId(item.normalized));
                     chip.appendChild(text);
+                    chip.appendChild(definitionButton);
                     chip.appendChild(edit);
                     chip.appendChild(remove);
                     container.appendChild(chip);
                 });
             }
+        }
+
+        function formatEnglishDefinition(item) {
+            if (item.englishDefinition) {
+                const part = item.definitionPartOfSpeech ? `${item.definitionPartOfSpeech}: ` : '';
+                const example = item.definitionExample ? ` Example: ${item.definitionExample}` : '';
+                return `${part}${item.englishDefinition}${example}`;
+            }
+            if (item.definitionStatus === 'loading') return 'İngilizce açıklama yükleniyor...';
+            if (item.definitionStatus === 'not-found') return 'Free Dictionary API içinde İngilizce açıklama bulunamadı.';
+            if (item.definitionStatus === 'error') return 'İngilizce açıklama alınamadı. Tekrar deneyebilirsin.';
+            return 'İngilizce açıklama henüz alınmadı.';
+        }
+
+        function definitionButtonLabel(item) {
+            if (item.definitionStatus === 'loading') return 'Yükleniyor';
+            if (item.englishDefinition) return 'Yenile';
+            return 'Açıklama getir';
         }
 
         function wordBelongsToCurrentQuestion(item) {

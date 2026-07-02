@@ -218,7 +218,7 @@
         }
         .word-chip {
             display: inline-flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 8px;
             border: 1px solid var(--border-color);
             background: var(--app-bg);
@@ -228,15 +228,28 @@
             font-size: 14px;
             font-weight: 700;
             max-width: 100%;
+            flex: 1 1 260px;
         }
         .word-chip-text {
             display: grid;
-            gap: 2px;
+            gap: 4px;
             min-width: 0;
+            flex: 1 1 auto;
         }
         .word-chip-word {
             color: var(--text-main);
             line-height: 1.2;
+        }
+        .word-chip-definition {
+            color: var(--text-main);
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.35;
+            overflow-wrap: anywhere;
+        }
+        .word-chip-definition.empty {
+            color: var(--text-muted);
+            font-style: italic;
         }
         .word-chip-meaning {
             color: var(--text-muted);
@@ -249,7 +262,8 @@
             font-style: italic;
             font-weight: 500;
         }
-        .word-meaning-edit {
+        .word-meaning-edit,
+        .word-definition-fetch {
             border: 1px solid var(--border-color);
             border-radius: 6px;
             background: var(--btn-bg);
@@ -260,8 +274,13 @@
             padding: 6px 8px;
             white-space: nowrap;
         }
-        .word-meaning-edit:hover {
+        .word-meaning-edit:hover,
+        .word-definition-fetch:hover:not(:disabled) {
             background: var(--btn-hover);
+        }
+        .word-definition-fetch:disabled {
+            cursor: wait;
+            opacity: 0.7;
         }
         .word-remove {
             width: 20px;
@@ -292,6 +311,9 @@
             min-height: 180px;
             padding: 14px;
             background: var(--context-bg);
+        }
+        .word-list-full .word-chip {
+            flex-basis: 100%;
         }
         .note-list {
             display: grid;
